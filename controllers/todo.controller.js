@@ -8,5 +8,3 @@ const createTodo = async (req, res, next) => {
         next(error)
     }
 }
-
-module.exports = {createTodo}
