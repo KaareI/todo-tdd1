@@ -42,8 +42,22 @@ const updateTodo = async (req, res, next) => {
                 useFindAndModify: false
             }
         )
-        if(updatedTodo){
+        if (updatedTodo) {
             res.status(200).json(updatedTodo)
+        } else {
+            res.status(404).send();
+        }
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+const deleteTodo = async (req, res, next) => {
+    try {
+        await TodoModel.findByIdAndDelete(req.params.todoId);
+        if (deleteTodo) {
+            res.status(200).json(deleteTodo)
         } else {
             res.status(404).send();
         }
@@ -57,5 +71,6 @@ module.exports = {
     createTodo,
     getTodos,
     getTodoById,
-    updateTodo
+    updateTodo,
+    deleteTodo
 }
