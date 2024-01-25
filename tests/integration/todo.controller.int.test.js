@@ -2,10 +2,17 @@ const request = require("supertest")
 const app = require("../../app");
 const newTodo = require("../mock-data/new-todo.json")
 const {createTestScheduler} = require("jest");
+const TodoModel = require("../../models/todo.model");
+const TodoController = require("../../controllers/todo.controller");
 
 const endpointUrl = "/todos/";
 
-let firstTodo;
+let firstTodo, newTodoId;
+const testData = {
+    title: "Make integration tets for PUT",
+    done: true,
+}
+const notExisitingTodoId = "65a7cfdbta5eba3bcd1e1315"
 
 describe(endpointUrl, () => {
     it("POST " + endpointUrl, async () => {
@@ -15,6 +22,7 @@ describe(endpointUrl, () => {
         expect(response.statusCode).toBe(201);
         expect(response.body.title).toBe(newTodo.title);
         expect(response.body.done).toBe(newTodo.done);
+        newTodoId = response.body._id
     })
 
     it(
@@ -50,6 +58,26 @@ describe(endpointUrl, () => {
         const response = await request(app)
             .get(endpointUrl + "65a7cfdbta5eba3bcd1e1315");
         expect(response.statusCode).toBe(404)
+    })
+
+    it("PUT " + endpointUrl, async () => {
+        const testData = {
+            title: "Make integration test for PUT",
+            done: true
+        }
+        const res = await request(app)
+            .put(endpointUrl + newTodoId)
+            .send(testData)
+        expect(res.statusCode).toBe(200)
+        expect(res.body.title).toBe(testData.title);
+        expect(res.body.done).toBe(testData.done);
+    })
+
+    it("should return 404 on PUT " + endpointUrl, async () => {
+        const res = await request(app)
+            .put(endpointUrl + notExisitingTodoId)
+            .send(testData);
+        expect(res.statusCode).toBe(404)
     })
 
 })

@@ -21,8 +21,29 @@ const getTodos = async (req, res, next) => {
 const getTodoById = async (req, res, next) => {
     try {
         const todoModel = await TodoModel.findById(req.params.todoId)
-        if(todoModel){
+        if (todoModel) {
             res.status(200).json(todoModel)
+        } else {
+            res.status(404).send();
+        }
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+const updateTodo = async (req, res, next) => {
+    try {
+        const updatedTodo = await TodoModel.findByIdAndUpdate(
+            req.params.todoId,
+            req.body,
+            {
+                new: true,
+                useFindAndModify: false
+            }
+        )
+        if(updatedTodo){
+            res.status(200).json(updatedTodo)
         } else {
             res.status(404).send();
         }
@@ -35,5 +56,6 @@ const getTodoById = async (req, res, next) => {
 module.exports = {
     createTodo,
     getTodos,
-    getTodoById
+    getTodoById,
+    updateTodo
 }
